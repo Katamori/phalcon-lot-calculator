@@ -40,24 +40,24 @@ class CalculateController extends Controller
     {
         $res = new Response();
         $res->setHeader("Access-Control-Allow-Origin", "*")
-            ->setHeader("Access-Control-Allow-Headers", "*");
+            ->setHeader('Access-Control-Allow-Headers', '*');
+
+
+        // todo validate structure
+        $requestBody = $this->request->getRawBody();
+        $requestCoords = json_decode($requestBody, true);
 
         if (false) {
             return $res->setStatus(400)
                         ->setJsonContent([
-                "message" => "invalid parameters"
+                "message" => "invalid request"
             ]);
         }
 
         $calc = $this->getCalculator();
         $corners = $calc->getAllCorners([
-            [
-                "x" => 0,
-                "y" => 0
-            ], [
-                "x" => 2,
-                "y" => 4
-            ],
+            $requestCoords[0],
+            $requestCoords[1],
         ]);
         $calc->setCorners($corners);
 
@@ -78,7 +78,6 @@ class CalculateController extends Controller
             $calculatorClass = $this->getCalculatorClass();
 
             $this->_calculator = new $calculatorClass();
-            var_dump($this->_calculator);
         }
 
         return $this->_calculator;

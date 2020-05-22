@@ -5,7 +5,7 @@ namespace Project;
 use Phalcon\Config\Adapter\Ini as Config;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Events\Manager;
-use Phalcon\Http\Response;
+use Phalcon\Http\Request;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url;
@@ -47,8 +47,9 @@ class Di extends FactoryDefault
             return $router;
         });
 
-        // setup response service
-        $this->set(Service::RESPONSE, new Response());
+       $this->set(Service::REQUEST, function () {
+            return new Request();
+        });
 
         // setup dispatcher: global event manager + default namespace
         $this->set(Service::DISPATCHER, function () {

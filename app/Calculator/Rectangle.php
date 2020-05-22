@@ -3,6 +3,7 @@
 namespace Project\Calculator;
 
 use Project\CalculatorInterface;
+use Project\Constant\Cost;
 
 /**
  * Class Rectangle
@@ -77,7 +78,54 @@ class Rectangle implements CalculatorInterface
         $width = $corners['lower_right']['x'] - $corners['upper_left']['x'];
         $height = $corners['lower_right']['y'] - $corners['upper_left']['y'];
 
-        return -1;
+        $cost = 0;
+
+        // add cornerstones
+        $cost += 4 * Cost::CORNER['cost'];
+        $width -= 2 * Cost::CORNER['size'];
+        $height -= 2 * Cost::CORNER['size'];
+
+        // add gates
+        $gateFullCost = Cost::GATE['cost'] + (2 * Cost::PILLAR['cost']);
+        $gateFullLength = Cost::GATE['size'] + (2 * Cost::PILLAR['size']);
+        $wireSegmentFullCost = Cost::WIRE['cost'] + Cost::PILLAR['cost'];
+        $wireSegmentFullLength = Cost::WIRE['size'] + Cost::PILLAR['size'];
+
+        if ($width > $gateFullLength) {
+            $cost += 2 * $gateFullCost;
+            $width -= $gateFullLength;
+
+            // add wireSegments to segments (= from cornerstone to gate)
+            $widthSegment = $width / 2;
+
+            $wireSegmentCount = floor($widthSegment / $wireSegmentFullLength);
+
+            // add a final wire, without pillar
+            $cost += 4 * (($wireSegmentCount * $wireSegmentFullCost) + Cost::WIRE['cost']);
+            $width = 0;
+        }
+
+        if ($height > $gateFullLength) {
+            $cost += 2 * $gateFullCost;
+            $height -= $gateFullLength;
+
+            // add wireSegments to segments (= from cornerstone to gate)
+            $heightSegment = $height;
+
+            $wireSegmentCount = floor($heightSegment / $wireSegmentFullLength);
+
+            // add a final wire, without pillar
+            $cost += 4 * (($wireSegmentCount * $wireSegmentFullCost) + Cost::WIRE['cost']);
+            $height = 0;
+        }
+
+        // calculate the remaining (sides without gates
+        $remainingPerimeter = (2 * $width) + (2 * $height);
+
+        $wireSegmentCount = floor($remainingPerimeter / $wireSegmentFullLength);
+        $cost += 4 * (($wireSegmentCount * $wireSegmentFullCost) + Cost::WIRE['cost']);
+
+        return $cost;
     }
 
     /**
