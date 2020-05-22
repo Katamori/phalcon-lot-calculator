@@ -39,9 +39,12 @@ class CalculateController extends Controller
     public function indexAction()
     {
         $res = new Response();
+        $res->setHeader("Access-Control-Allow-Origin", "*")
+            ->setHeader("Access-Control-Allow-Headers", "*");
 
         if (false) {
-            return $res->setStatus(400)->setJsonContent([
+            return $res->setStatus(400)
+                        ->setJsonContent([
                 "message" => "invalid parameters"
             ]);
         }

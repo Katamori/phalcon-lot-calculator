@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <img alt="My Robohash" src="./assets/my_robohash.png">
-    <LotCalc msg="Phalcon Lot Calculator"/>
+    <LotCalc title="Phalcon Lot Calculator"/>
   </div>
 </template>
 
