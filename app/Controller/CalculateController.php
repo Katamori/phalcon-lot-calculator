@@ -43,7 +43,9 @@ class CalculateController extends Controller
         $res->setHeader("Access-Control-Allow-Origin", "*")
             ->setHeader('Access-Control-Allow-Headers', '*');
 
-        if (!in_array($this->request->getMethod(), [
+        $reqMethod = $this->request->getMethod();
+
+        if (!in_array($reqMethod, [
             "POST",
             "OPTIONS"
         ])) {
@@ -51,6 +53,11 @@ class CalculateController extends Controller
                         ->setJsonContent([
                 "message" => "Only POST and OPTIONS methods are allowed!"
             ]);
+        }
+
+        // for the VueJS preflight request
+        if ($reqMethod === "OPTIONS") {
+            return $res->setStatusCode(200);
         }
 
         $requestBody = $this->request->getRawBody();
@@ -63,7 +70,7 @@ class CalculateController extends Controller
         $validation->add("coordinates", $coordsValidator);
 
         $coordValidationMessages = $validation->validate([
-            "coordinates"   => $requestCoords
+            "coordinates"   => $requestBody
         ]);
 
         if ($coordValidationMessages->count() > 0) {

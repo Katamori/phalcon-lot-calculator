@@ -22,7 +22,7 @@ class LotCoordinateValidator implements Validation\ValidatorInterface
      */
     public function validate(Validation $validation, $field): bool
     {
-        $value = $validation->getValue($field);
+        $value = json_decode($validation->getValue($field), true);
 
         // does this has the length of 2? (+ the points themselves)
         if (sizeof($value) !== 2
