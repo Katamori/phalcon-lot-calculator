@@ -63,6 +63,11 @@ export default {
       ]);
 
       console.log(response)
+
+      if (!response) {
+        return;
+      }
+
       let data = response.data;
 
       this.corners = [
@@ -74,7 +79,14 @@ export default {
       this.cost = data.cost;
     },
     send: async function(data) {
-      return await axios.post('http://localhost:7000/calculate', data)
+      return await axios
+        .post('http://localhost:7000/calculate', data)
+        .catch(this.alertErrorMessage)
+    },
+    alertErrorMessage: function(error) {
+      let data = error.response.data || [];
+
+      data.forEach(dataItem => window.alert(dataItem.message || "Error!"))
     }
   }
 }
